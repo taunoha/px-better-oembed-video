@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== Better oEmbed Video ===
 Contributors: taunoh
 Donate link: http://prixal.eu
 Tags: video, embed, oembed, responsive
