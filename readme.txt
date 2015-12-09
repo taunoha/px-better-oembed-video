@@ -14,6 +14,8 @@ This plugin prevents Youtube and Vimeo players to block page rendering.
 
 This plugin prevents Youtube and Vimeo players to block page rendering. Maybe you have recognized that pages that have a lot of embed videos are loading slowly. This is caused by the vendors video players that need to be downloaded and initialized before website can be used by the user. This plugin stops this behavior and makes page load faster.
 
+This plugin will automatically resize your videos in a responsive fashion.
+
 == Installation ==
 
 1. Go to your admin area and select Plugins -> Add new from the menu.
