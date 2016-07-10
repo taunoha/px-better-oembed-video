@@ -3,8 +3,8 @@ Contributors: taunoh
 Donate link: http://prixal.eu
 Tags: video, embed, oembed, responsive
 Requires at least: 4.0
-Tested up to: 4.4
-Stable tag: 1.0
+Tested up to: 4.5.3
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,5 +25,10 @@ This plugin will automatically resize your videos in a responsive fashion.
 
 == Changelog ==
 
-= 1.0 =
+= 1.1.0 =
+* Updated Youtube Video thumbnail to maxresdefault.jpg
+* Added filter "better_oembed_video_thumbnail_url" to filter Video thumbnail URL
+* Added filter "better_oembed_video_thumbnail_html" to filter HTML output
+
+= 1.0.0 =
 * Initial release.

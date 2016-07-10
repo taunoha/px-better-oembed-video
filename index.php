@@ -3,7 +3,7 @@
  *  Plugin Name: Better oEmbed Video
  *  Plugin URI: http://prixal.eu/
  *  Description: Better oEmbed video output for WordPress. This plugin prevents Youtube and Vimeo players to block page rendering. It also makes all players responsive.
- *  Version: 1.0
+ *  Version: 1.1.0
  *  Author: Prixal LLC
  *  Author URI: http://prixal.eu/
  *  License: GPL2+
@@ -61,19 +61,31 @@ class Better_oEmbed_Video
         {
             $id = $matches[1];
             $result = get_post_meta($post_id, '_px_oembed_' . $id, true);
+            $result = '';
 
             if( empty($result) )
             {
                 $response = wp_remote_get('http://www.youtube.com/oembed/?url=' . $url . '&format=json');
                 $hash = @json_decode($response['body'], true);
 
+                /**
+                 * Filter the Video thumbnail URL
+                 *
+                 * @since 1.1.0
+                 *
+                 * @param string $thumbnail_url Default thumbnail URL
+                 * @param string $id            Video ID
+                 * @param int    $post_id       Post ID
+                 */
+                $thumbnail_url = apply_filters('better_oembed_video_thumbnail_url', 'http://img.youtube.com/vi/' . $id . '/maxresdefault.jpg', $id, $post_id);
+
                 if( is_array($hash) )
                 {
                     $data = array(
                         'id' => $id,
                         'hash' => 'px-' . rand(1, 100) . '-' . $id,
-                        'thumbnail' => sprintf('<img src="%s" alt="%s" width="%d" height="%d" />', esc_url('http://img.youtube.com/vi/' . $id . '/mqdefault.jpg'), esc_attr($hash['title']), $hash['width'], $hash['height']),
-                        'embed_url' => esc_url('https://www.youtube.com/embed/' . $id),
+                        'thumbnail' => sprintf('<img src="%s" alt="%s" width="%d" height="%d" />', esc_url($thumbnail_url), esc_attr($hash['title']), $hash['width'], $hash['height']),
+                        'embed_url' => 'http://www.youtube.com/embed/' . esc_attr($id),
                         'caption'   => $hash['title']
                     );
 
@@ -91,19 +103,31 @@ class Better_oEmbed_Video
         {
             $id = $matches[count($matches)-1];
             $result = get_post_meta($post_id, '_px_oembed_' . $id, true);
+            $result = '';
 
             if( empty($result) )
             {
-                $response = wp_remote_get('http://vimeo.com/api/oembed.json?url=' . $url);
+                $response = wp_remote_get('http://vimeo.com/api/oembed.json?url=' . esc_url($url));
                 $hash = @json_decode($response['body'], true);
+
+                /**
+                 * Filter the Video thumbnail URL
+                 *
+                 * @since 1.1.0
+                 *
+                 * @param string $thumbnail_url Default thumbnail URL
+                 * @param string $id            Video ID
+                 * @param int    $post_id       Post ID
+                 */
+                $thumbnail_url = apply_filters('better_oembed_video_thumbnail_url', $hash['thumbnail_url'], $hash['video_id'], $post_id);
 
                 if( is_array($hash) )
                 {
                     $data = array(
                         'id' => $id,
                         'hash' => 'px-' . rand(1, 100) . '-' . $id,
-                        'thumbnail' => sprintf('<img src="%s" alt="%s" width="%d" height="%d" />', esc_url($hash['thumbnail_url']), esc_attr($hash['title']), $hash['width'], $hash['height']),
-                        'embed_url' => esc_url('http://player.vimeo.com/video/' . $id),
+                        'thumbnail' => sprintf('<img src="%s" alt="%s" width="%d" height="%d" />', esc_url($thumbnail_url), esc_attr($hash['title']), $hash['width'], $hash['height']),
+                        'embed_url' => 'http://player.vimeo.com/video/' . esc_attr($id),
                         'caption'   => $hash['title']
                     );
 
@@ -141,7 +165,15 @@ class Better_oEmbed_Video
             );
         }
 
-        return $html;
+        /**
+         * Filter the Better Video oEmbed HTML
+         *
+         * @since 1.1.0
+         *
+         * @param string $html      Default HTML
+         * @param int    $post_id   Post ID
+         */
+        return apply_filters('better_oembed_video_thumbnail_html', $html, $post_id);
     }
 
     private function template($template, $args)
